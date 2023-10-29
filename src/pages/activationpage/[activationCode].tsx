@@ -1,34 +1,48 @@
 import React from 'react'
 import type { ReactElement } from 'react'
 import Head from 'next/head'
-import Button from '../components/Button'
-import CardBox from '../components/CardBox'
-import SectionFullScreen from '../components/Section/FullScreen'
-import LayoutGuest from '../layouts/Guest'
-import { ErrorMessage, Field, Form, Formik, useFormik } from 'formik'
+import CardBox from '../../components/CardBox'
+import SectionFullScreen from '../../components/Section/FullScreen'
+import LayoutGuest from '../../layouts/Guest'
+import { useFormik } from 'formik'
 
 import { useRouter } from 'next/router'
-import { getPageTitle } from '../config'
-import axiosInstance from '../interceptor'
+import { getPageTitle } from '../../config'
+
+import axiosInstance from '../../interceptor'
 import * as Yup from 'yup'
-import { UserAuth } from '../context/AuthContext'
 
 const schema = Yup.object().shape({
-  email: Yup.string().required().email(),
-  password: Yup.string().required().min(7),
+  password: Yup.string()
+    .required('Password is required')
+    .min(6, 'Password must be at least 8 characters')
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
+      'Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character'
+    )
+    .max(20, 'Password can be at most 20 characters'),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref('password')], 'Passwords must match')
+    .required('Confirm Password is required'),
 })
 
-const LoginPage = () => {
-  const { signinUsernamePassword } = UserAuth()
+const ActivationPage = () => {
+  const router = useRouter()
+
   const formik = useFormik({
     initialValues: {
       password: '',
-      email: '',
+      confirmPassword: '',
     },
     validationSchema: schema,
-    onSubmit: async ({ email, password }) => {
+    onSubmit: async ({ password }) => {
+      console.log('sadasd')
       try {
-        await signinUsernamePassword(email, password)
+        const response = await axiosInstance.post('/api/auth/activate-new-user', {
+          activationCode: router.query.activationCode,
+          password: password,
+        })
+        router.push('/login')
       } catch (error) {
         console.log(error)
       }
@@ -64,27 +78,10 @@ const LoginPage = () => {
               <span>CUIZONE</span>
             </h1>
             <h2 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-              Welcome, please sign in to your dashboard
+              Welcome, please enter your new password
             </h2>
           </header>
           <form className="space-y-6 dark:text-gray-100" onSubmit={handleSubmit}>
-            <div className="space-y-1">
-              <label htmlFor="email" className="font-medium">
-                Email
-              </label>
-              <input
-                className={sameClassname + (errors.email && touched.email ? ' border-red-600' : '')}
-                type="email"
-                id="email"
-                name="email"
-                onChange={handleChange}
-                value={values.email}
-                placeholder="Enter your email.."
-              />
-              {errors.email && touched.email && (
-                <span className="text-xs text-red-600 mt-1 ml-1">{errors.email}</span>
-              )}
-            </div>
             <div className="space-y-1">
               <label htmlFor="password" className="font-medium">
                 Password
@@ -104,6 +101,27 @@ const LoginPage = () => {
                 <span className="text-xs text-red-600 mt-1 ml-1">{errors.password}</span>
               )}
             </div>
+            <div className="space-y-1">
+              <label htmlFor="confirmPassword" className="font-medium">
+                Confirm Password
+              </label>
+              <input
+                className={
+                  sameClassname +
+                  (errors.confirmPassword && touched.confirmPassword ? ' border-red-600' : '')
+                }
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                onChange={handleChange}
+                value={values.confirmPassword}
+                placeholder="Confirm password"
+              />
+              {errors.confirmPassword && touched.confirmPassword && (
+                <span className="text-xs text-red-600 mt-1 ml-1">{errors.confirmPassword}</span>
+              )}
+            </div>
+
             <button
               type="submit"
               className="w-full inline-flex justify-center items-center space-x-2 border font-semibold rounded-lg px-6 py-3 leading-6 border-blue-700 bg-blue-700 text-white hover:text-white hover:bg-blue-600 hover:border-blue-600 focus:ring focus:ring-blue-400 focus:ring-opacity-50 active:bg-blue-700 active:border-blue-700 dark:focus:ring-blue-400 dark:focus:ring-opacity-90"
@@ -121,7 +139,7 @@ const LoginPage = () => {
                   clipRule="evenodd"
                 />
               </svg>
-              <span>Sign In</span>
+              <span>Submit</span>
             </button>
           </form>
           <div className="p-5 md:px-16 grow text-sm text-center bg-gray-50 dark:bg-gray-700/50">
@@ -139,11 +157,11 @@ const LoginPage = () => {
   )
 }
 
-LoginPage.getLayout = function getLayout(page: ReactElement) {
+ActivationPage.getLayout = function getLayout(page: ReactElement) {
   return <LayoutGuest>{page}</LayoutGuest>
 }
 
-export default LoginPage
+export default ActivationPage
 
 {
 }

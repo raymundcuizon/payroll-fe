@@ -57,7 +57,7 @@ export default function NavBarItem({ item }: Props) {
         <span
           onClick={() => {
             if (item.label === 'Log Out') {
-              console.log('sadasd')
+              console.log('sadassdd')
             }
           }}
           className={`px-2 transition-colors ${

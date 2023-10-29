@@ -19,6 +19,8 @@ export default function SectionFullScreen({ bg, children }: Props) {
     componentClass += gradientBgPurplePink
   } else if (bg === 'pinkRed') {
     componentClass += gradientBgPinkRed
+  } else if (bg == 'dark') {
+    componentClass += gradientBgDark
   }
 
   return <div className={componentClass}>{children}</div>

@@ -40,7 +40,7 @@ export type ColorButtonKey =
   | 'info'
   | 'void'
 
-export type BgKey = 'purplePink' | 'pinkRed'
+export type BgKey = 'purplePink' | 'pinkRed' | 'dark'
 
 export type TrendType = 'up' | 'down' | 'success' | 'danger' | 'warning' | 'info'
 
