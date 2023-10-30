@@ -6,6 +6,7 @@ import CardBox from '../components/CardBox'
 import SectionFullScreen from '../components/Section/FullScreen'
 import LayoutGuest from '../layouts/Guest'
 import { ErrorMessage, Field, Form, Formik, useFormik } from 'formik'
+import { signIn } from 'next-auth/react'
 
 import { useRouter } from 'next/router'
 import { getPageTitle } from '../config'
@@ -28,7 +29,13 @@ const LoginPage = () => {
     validationSchema: schema,
     onSubmit: async ({ email, password }) => {
       try {
-        await signinUsernamePassword(email, password)
+        // await signinUsernamePassword(email, password)
+        const res = await signIn('credentials', {
+          username: email,
+          password: password,
+          redirect: false,
+        })
+        console.log(res)
       } catch (error) {
         console.log(error)
       }
