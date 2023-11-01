@@ -16,7 +16,7 @@ const handler = NextAuth({
         password: { label: 'Password', type: 'password' },
       },
 
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         if (!credentials?.username || !credentials?.password) return null
         try {
           const user = await login(credentials.username, credentials.password)

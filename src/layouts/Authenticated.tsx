@@ -11,6 +11,7 @@ import FooterBar from '../components/FooterBar'
 import FormField from '../components/Form/Field'
 import { Field, Form, Formik } from 'formik'
 import { useRouter } from 'next/router'
+import { useSession } from 'next-auth/react'
 
 type Props = {
   children: ReactNode
@@ -22,6 +23,14 @@ export default function LayoutAuthenticated({ children }: Props) {
 
   const router = useRouter()
 
+  const { data: session } = useSession()
+
+  useEffect(() => {
+    if (!session) {
+      router.push('/login')
+    }
+  }, [session, router])
+
   useEffect(() => {
     const handleRouteChangeStart = () => {
       setIsAsideMobileExpanded(false)
@@ -30,8 +39,6 @@ export default function LayoutAuthenticated({ children }: Props) {
 
     router.events.on('routeChangeStart', handleRouteChangeStart)
 
-    // If the component is unmounted, unsubscribe
-    // from the event with the `off` method:
     return () => {
       router.events.off('routeChangeStart', handleRouteChangeStart)
     }

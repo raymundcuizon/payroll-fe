@@ -9,6 +9,8 @@ import NavBarMenuList from '../MenuList'
 import { useAppDispatch, useAppSelector } from '../../../stores/hooks'
 import { MenuNavBarItem } from '../../../interfaces'
 import { setDarkMode } from '../../../stores/darkModeSlice'
+import { signOut } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 
 type Props = {
   item: MenuNavBarItem
@@ -16,6 +18,7 @@ type Props = {
 
 export default function NavBarItem({ item }: Props) {
   const dispatch = useAppDispatch()
+  const router = useRouter()
 
   const userName = useAppSelector((state) => state.main.userName)
 
@@ -55,9 +58,10 @@ export default function NavBarItem({ item }: Props) {
         {item.isCurrentUser && <UserAvatarCurrentUser className="w-6 h-6 mr-3 inline-flex" />}
         {item.icon && <Icon path={item.icon} className="transition-colors" />}
         <span
-          onClick={() => {
+          onClick={async () => {
             if (item.label === 'Log Out') {
-              console.log('sadassdd')
+              await signOut({ redirect: false })
+              router.push('/login')
             }
           }}
           className={`px-2 transition-colors ${

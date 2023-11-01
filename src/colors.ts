@@ -45,7 +45,7 @@ export const getButtonColor = (
     return ''
   }
 
-  const colors = {
+  const colors: any = {
     ring: {
       white: 'ring-gray-200 dark:ring-gray-500',
       whiteDark: 'ring-gray-200 dark:ring-gray-500',

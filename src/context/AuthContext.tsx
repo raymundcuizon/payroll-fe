@@ -1,10 +1,10 @@
 'use client'
 
-import { useContext, createContext, useState, useEffect, ReactNode } from 'react'
+import { useContext, createContext, ReactNode } from 'react'
 import axiosInstance from '../interceptor'
 import { useRouter } from 'next/navigation'
-import { useSelector, useDispatch } from 'react-redux'
 import { setUser } from '../stores/mainSlice'
+import { useDispatch } from 'react-redux'
 
 type AuthContextType = {
   signinUsernamePassword: (email: string, password: string) => void

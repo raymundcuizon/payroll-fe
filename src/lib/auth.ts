@@ -24,7 +24,6 @@ export const login: LoginFn = async (username, password) => {
       password: password,
     })
 
-    console.log(response)
     const loginResponse: ILoginResponse = response.data
 
     const name =

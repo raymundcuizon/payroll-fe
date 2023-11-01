@@ -1,18 +1,15 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import type { ReactElement } from 'react'
 import Head from 'next/head'
-import Button from '../components/Button'
 import CardBox from '../components/CardBox'
 import SectionFullScreen from '../components/Section/FullScreen'
 import LayoutGuest from '../layouts/Guest'
-import { ErrorMessage, Field, Form, Formik, useFormik } from 'formik'
-import { signIn } from 'next-auth/react'
+import { useFormik } from 'formik'
+import { signIn, useSession } from 'next-auth/react'
 
 import { useRouter } from 'next/router'
 import { getPageTitle } from '../config'
-import axiosInstance from '../interceptor'
 import * as Yup from 'yup'
-import { UserAuth } from '../context/AuthContext'
 
 const schema = Yup.object().shape({
   email: Yup.string().required().email(),
@@ -20,7 +17,15 @@ const schema = Yup.object().shape({
 })
 
 const LoginPage = () => {
-  const { signinUsernamePassword } = UserAuth()
+  const router = useRouter()
+  const { data: session } = useSession()
+
+  useEffect(() => {
+    if (session) {
+      router.push('/')
+    }
+  }, [router, session])
+
   const formik = useFormik({
     initialValues: {
       password: '',
@@ -29,13 +34,12 @@ const LoginPage = () => {
     validationSchema: schema,
     onSubmit: async ({ email, password }) => {
       try {
-        // await signinUsernamePassword(email, password)
-        const res = await signIn('credentials', {
+        await signIn('credentials', {
           username: email,
           password: password,
           redirect: false,
         })
-        console.log(res)
+        router.push('/')
       } catch (error) {
         console.log(error)
       }

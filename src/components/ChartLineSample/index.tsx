@@ -30,7 +30,7 @@ const options = {
   },
 }
 
-const ChartLineSample = ({ data }) => {
+const ChartLineSample = ({ data }: { data: any }) => {
   return <Line options={options} data={data} className="h-96" />
 }
 

@@ -6,7 +6,7 @@ type Props = {
   mb?: string
   noWrap?: boolean
   classAddon?: string
-  children: ReactNode
+  children: ReactNode | any
   className?: string
 }
 
